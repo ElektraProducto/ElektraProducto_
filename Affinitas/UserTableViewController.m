@@ -28,8 +28,9 @@
     [[_ref child:@"users"] observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
         // Get user value
         NSMutableArray *myArray = [NSMutableArray array];
+        NSMutableArray *imageArray = [NSMutableArray array];
         for (FIRDataSnapshot *item in snapshot.children) {
-            if (item.value[@"ekt_id"] != nil) {
+            if (item.value[@"ekt_id"] != 0) {
                 AFUsers *user = [[AFUsers alloc] init];
                 user._id = item.value[@"ekt_id"];
                 user.fullName = item.value[@"full_name"];
@@ -39,7 +40,7 @@
                     user.image_url = @"https://picsum.photos/id/778/200";
                 }
                 user.age = item.value[@"age"];
-                user.segment = item.value[@"Segment"];
+                user.segment = item.value[@"segment"];
                 user.credit = item.value[@"credit"];
                 user.total_images = item.value[@"spent"];
                 user.onlineShopper = item.value[@"online_shopper"];
@@ -47,8 +48,22 @@
                 user.phone = item.value[@"phone"];
                 user.mail = item.value[@"mail"];
                 user.spent = item.value[@"spent"];
-                user.images = @[user.image_url, user.image_url];
+                for (NSDictionary *product in item.value[@"commprados"]) {
+                    [imageArray addObject:product[@"foto"]];
+                }
+                user.images = imageArray;
                 [myArray addObject:user];
+            } else {
+                AFUsers *user = [[AFUsers alloc] init];
+                user.age = item.value[@"brand"];
+                user.segment = item.value[@"last_network"];
+                user.credit = item.value[@"times_seen"];
+                user.image_url = @"https://picsum.photos/id/778/200";
+
+                [myArray addObject:user];
+                
+
+                
             }
         }
         root.data= myArray;
